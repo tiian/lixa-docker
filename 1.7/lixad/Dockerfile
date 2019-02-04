@@ -21,8 +21,7 @@ RUN	apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/log/* 
 # LIXA official package
-ARG	CACHE_TAG
-ENV	LIXA_VERSION=$CACHE_TAG
+ENV	LIXA_VERSION=1.7.3
 ENV	LIXA_DOWNLOAD_URL https://sourceforge.net/projects/lixa/files/lixa/testing/lixa-$LIXA_VERSION.tar.gz/download
 # build LIXA
 RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-dev uuid-dev' \
