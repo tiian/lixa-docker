@@ -58,6 +58,8 @@ EXPOSE 2345
 # src/common/lixa_trace.h for more available values
 #ENV LIXA_TRACE_MASK 0x5
 # start LIXA state server
+ARG	CACHE_TAG
+RUN	echo $CACHE_TAG
 USER	lixa
 ENTRYPOINT ["/home/lixa/lixad-entrypoint.sh"]
 CMD 	["lixad"]
