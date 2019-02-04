@@ -21,7 +21,8 @@ RUN	apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/log/* 
 # LIXA official package
-ENV	LIXA_VERSION 1.7.3
+ARG	CACHE_TAG
+ENV	LIXA_VERSION=$CACHE_TAG
 ENV	LIXA_DOWNLOAD_URL https://sourceforge.net/projects/lixa/files/lixa/testing/lixa-$LIXA_VERSION.tar.gz/download
 # build LIXA
 RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-dev uuid-dev' \
@@ -58,8 +59,6 @@ EXPOSE 2345
 # src/common/lixa_trace.h for more available values
 #ENV LIXA_TRACE_MASK 0x5
 # start LIXA state server
-ARG	CACHE_TAG
-RUN	echo $CACHE_TAG
 USER	lixa
 ENTRYPOINT ["/home/lixa/lixad-entrypoint.sh"]
 CMD 	["lixad"]
