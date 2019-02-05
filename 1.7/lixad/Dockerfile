@@ -1,8 +1,13 @@
 # A Docker image for LIXA state server based on Debian Linux
 FROM debian:9-slim
 #
-# Build with
-#	docker build -t tiian/lixa-lixad:1.7.3 .
+# Build without parameters to build latest
+#	docker build -t tiian/lixa-lixad .
+# Build with 2 parameters to build a specific release
+#	docker build --build-arg VERSION_CODE=1.7.3 \
+#		--build-arg VERSION_TYPE=testing -t tiian/lixa-lixad:1.7.3 .
+#   ** Note: version code must be of the right type and must exists in
+#            Sourceforge.net
 # Execute with
 #	docker run --rm -p 2345:2345 -d tiian/lixa-lixad:1.7.3
 #
