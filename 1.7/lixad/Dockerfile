@@ -7,7 +7,7 @@ FROM debian:9-slim
 #	docker run --rm -p 2345:2345 -d tiian/lixa-lixad:1.7.3
 #
 # Update Ubuntu Software repository
-ARG DEBIAN_FRONTEND=noninteractive
+ARG 	DEBIAN_FRONTEND=noninteractive
 # Install generic pre-requisites
 RUN	apt-get update && apt-get install -y --no-install-recommends \
 	apt-utils \
@@ -21,18 +21,29 @@ RUN	apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/log/* 
 # LIXA official package
-ENV	LIXA_VERSION=1.7.3
-ENV	LIXA_DOWNLOAD_URL https://sourceforge.net/projects/lixa/files/lixa/testing/lixa-$LIXA_VERSION.tar.gz/download
+# VERSION_CODE must be in format V.R.M and it must be available on Sourceforge
+# VERSION_TYPE must be "stable" or "testing"
+# elsewhere, latest will be used
+ARG	VERSION_CODE
+ARG	VERSION_TYPE
+ENV	VERSION_CODE $VERSION_CODE
+ENV	VERSION_TYPE $VERSION_TYPE
+ENV	LIXA_VERSION $VERSION
+ENV	LIXA_DOWNLOAD_DEF_URL https://sourceforge.net/projects/lixa/files/latest/download
+ENV	LIXA_DOWNLOAD_VER_URL https://sourceforge.net/projects/lixa/files/lixa/$VERSION_TYPE/lixa-$VERSION_CODE.tar.gz/download
 # build LIXA
 RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-dev uuid-dev' \
 	&& set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends \
 		$BUILD_DEPS \
 	&& mkdir -p /lixa \
-	&& wget -O lixa.tar.gz "$LIXA_DOWNLOAD_URL" \
+	&& if [ "z$VERSION_CODE" != "z" -a "z$VERSION_TYPE" != "z" ]; \
+		then wget -O lixa.tar.gz "$LIXA_DOWNLOAD_VER_URL"; \
+		else wget -O lixa.tar.gz "$LIXA_DOWNLOAD_DEF_URL"; \
+	   fi \
 	&& tar -xzf lixa.tar.gz -C /lixa \
 	&& rm lixa.tar.gz \
-	&& cd /lixa/lixa-$LIXA_VERSION \
+	&& cd /lixa/lixa-* \
 	&& ./configure --disable-client --disable-syslog \
 	&& make && make install \
 	&& rm -rf /opt/lixa/share /opt/lixa/bin /opt/lixa/include \
