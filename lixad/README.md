@@ -23,3 +23,5 @@ docker logs 66b011bb4f52
 ```
 
 It can be used by every compatible LIXA client.
+
+LIXA documentation is available at http://www.tiian.org/lixa/
