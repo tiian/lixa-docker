@@ -1,15 +1,17 @@
-# A Docker image for LIXA client based on Debian Linux
+# A Docker image with
+# XTA (XA Transaction API) for C language
+# based on Debian Linux
 FROM debian:9-slim
 #
 # Build without parameters to build latest
-#	docker build -t lixa/lixac .
+#	docker build -t lixa/xta-c .
 # Build with 2 parameters to build a specific release
-#	docker build --build-arg VERSION_CODE=1.7.3 \
-#		--build-arg VERSION_TYPE=testing -t lixa/lixac:1.7.3 .
+#	docker build --build-arg VERSION_CODE=1.7.4 \
+#		--build-arg VERSION_TYPE=testing -t lixa/xta-c:1.7.4 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
-# Execute with
-#	docker run --rm -it lixa/lixac bash
+# Inspect the image content with
+#	docker run --rm -it lixa/xta-c bash
 #
 # Update Ubuntu Software repository
 ARG 	DEBIAN_FRONTEND=noninteractive
@@ -37,7 +39,7 @@ ENV	LIXA_VERSION $VERSION
 ENV	LIXA_DOWNLOAD_DEF_URL https://sourceforge.net/projects/lixa/files/latest/download
 ENV	LIXA_DOWNLOAD_VER_URL https://sourceforge.net/projects/lixa/files/lixa/$VERSION_TYPE/lixa-$VERSION_CODE.tar.gz/download
 # build LIXA
-RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-dev uuid-dev' \
+RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-dev uuid-dev libpq-dev default-libmysqlclient-dev' \
 	&& set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends \
 		$BUILD_DEPS \
@@ -47,23 +49,22 @@ RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-
 		else wget -O lixa.tar.gz "$LIXA_DOWNLOAD_DEF_URL"; \
 	   fi \
 	&& tar -xzf lixa.tar.gz -C /lixa \
-##COPY    lixa.tar.gz /
-##RUN	tar -xzf lixa.tar.gz -C /lixa \
 	&& rm lixa.tar.gz \
 	&& cd /lixa/lixa-* \
-	&& ./configure --disable-server --disable-xta --disable-syslog \
+	&& ./configure --disable-syslog --disable-server \
+		--disable-xta-cpp --disable-xta-java --disable-xta-python \
+		--with-mysql --with-postgresql \
 	&& make && make install \
 	&& rm -rf /opt/lixa/share \
 	&& rm -r /lixa \
 	&& apt-get purge -y --auto-remove $BUILD_DEPS \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& rm -rf /var/log/* /opt/lixa/include /opt/lixa/var \
+	&& rm -rf /var/log/* /opt/lixa/var \
 	&& mv -v /opt/lixa/etc/lixac1_conf.xml /opt/lixa/etc/lixac_conf.xml \
-	&& rm /opt/lixa/etc/lixad*_conf.xml \
-	&& rm /opt/lixa/lib/*.*a
+	&& rm /opt/lixa/etc/lixad*_conf.xml
 # security hardening: LIXA cli will run using non root privileges
-RUN	addgroup lixa \
-	&& adduser --ingroup lixa --disabled-password --shell /bin/bash lixa \
-	&& echo "export PATH=\$PATH:/opt/lixa/bin" >> /home/lixa/.bashrc
-USER	lixa
+#RUN	addgroup lixa \
+#	&& adduser --ingroup lixa --disabled-password --shell /bin/bash lixa \
+#	&& echo "export PATH=\$PATH:/opt/lixa/bin" >> /home/lixa/.bashrc
+#USER	lixa
