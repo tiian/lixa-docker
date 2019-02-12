@@ -7,14 +7,28 @@ MySQL and PostgreSQL.
 ## How to use this image
 
 The basic usage of this image is as a starting point to create derived images
-with an application inside.
+with an application inside. Below there are some examples that can be 
+implemented using the base image.
 
-## XTA Hello World!
+## Examples based on xta-c Docker image
 
-Event XTA has its own Hello World! program, if it does not write "Hello World!"
-on the terminal...
+First of all, clone *lixa-docker* repository locally:
+
+```
+git clone https://github.com/tiian/lixa-docker.git
+cd lixa-docker/xta-c/
+```
+
+it contains the source files and the Dockerfiles that are necessary to build
+some examples that use xta-c base image.
+
+### XTA Hello World!
+
+Even XTA has its own *Hello World!* program, but it does not write
+"Hello World!" on the terminal...
 The easiest possible C program with XTA is provided in source file
 hello-world.c
+
 Its Docker image can be created with:
 
 ```
@@ -38,7 +52,7 @@ docker run --rm -it lixa/xta-c-hello-world bash
 
 root@5b3168d653a8:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 
-root@5b3168d653a8:/# /tmp/hello-world 
+root@5b3168d653a8:/# /myapp/hello-world 
 Creating a new XTA Transaction Manager object...
 2019-02-11 22:02:21.292122 [6/139869572630464] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 Creating a new XTA Transaction object...
@@ -54,7 +68,7 @@ That's all! You have just executed your first XTA program:
 
 Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-c/hello-world.c 
 
-## XTA with PostgreSQL
+### XTA with PostgreSQL
 
 This example shows as you can perform transactions with PostgreSQL database.
 First of all, you should execute a PostgreSQL instance: there's one ready to
@@ -79,7 +93,7 @@ is *192.168.123.35*, start the *XTA Hello PostgreSQL* container and execute the
 docker run --rm -it lixa/xta-c-hello-postgresql bash
 
 root@5240c89b72a8:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
-root@5240c89b72a8:/# /tmp/hello-postgresql 192.168.123.35 1 1
+root@5240c89b72a8:/# /myapp/hello-postgresql 192.168.123.35 1 1
 2019-02-11 22:17:21.169952 [7/139976635893696] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 ```

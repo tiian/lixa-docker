@@ -10,14 +10,15 @@ FROM lixa/xta-c:latest
 #
 # Update Ubuntu Software repository
 ARG 	DEBIAN_FRONTEND=noninteractive
-# Copy source file to compile in /tmp
-COPY	hello-world.c /tmp
+# Copy source file to compile in /myapp
+RUN	mkdir /myapp
+COPY	hello-world.c /myapp
 # build sample program
 RUN	BUILD_DEPS='make gcc libxml2-dev libglib2.0-dev libpq-dev' \
 	&& set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends \
 		libpq5 default-libmysqlclient-dev $BUILD_DEPS \
-	&& cd /tmp \
+	&& cd /myapp \
 	&& export PATH=$PATH:/opt/lixa/bin \
 	&& gcc hello-world.c $(lixa-config -x -c -f -l -d) -lpq $(mysql_config --libs_r) -o hello-world \
 	&& apt-get purge -y --auto-remove $BUILD_DEPS \

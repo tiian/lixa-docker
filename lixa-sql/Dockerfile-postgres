@@ -7,4 +7,4 @@
 #
 FROM 	postgres
 # Initialization script
-COPY	init-user-db.sh /docker-entrypoint-initdb.d/
+COPY	postgres-init-user-db.sh /docker-entrypoint-initdb.d/init-user-db.sh

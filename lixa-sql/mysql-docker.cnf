@@ -1,0 +1,4 @@
+[mysqld]
+skip-host-cache
+bind-address = 0.0.0.0
+init-file=/etc/mysql/conf.d/lixa.sql
