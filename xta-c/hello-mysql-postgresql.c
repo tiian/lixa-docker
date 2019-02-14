@@ -26,7 +26,7 @@
  * http://www.tiian.org/lixa/manuals/html/index.html
  *
  * This program accepts exactly three parameters on the command line:
- * first parameter: hostname for the PostgreSQL server
+ * first parameter: hostname for MySQL and PostgreSQL server
  * second parameter:  "commit", boolean value (if FALSE, "rollback")
  * third parameter: "insert", boolean value (if FALSE, "delete")
  *
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 {
     /* LIXA / XTA return and reason code */
     int                           rc;
-    /* First parameter: PostgreSQL server hostname */
+    /* First parameter: MySQL and PostgreSQL server hostname */
     const char                   *hostname;
     /* Second parameter: commit transaction? */
     int                           commit;
@@ -65,6 +65,12 @@ int main(int argc, char *argv[])
     const char                   *postgresql_stmt;
     /* XTA Resource for PostgreSQL */
     xta_postgresql_xa_resource_t *xar1 = NULL;
+    /* native MySQL connection handler */
+    MYSQL                        *rm2 = NULL;
+    /* variable for MySQL statement to execute */
+    const char                   *mysql_stmt;
+    /* XTA Resource for MySQL */
+    xta_mysql_xa_resource_t      *xar2 = NULL;
     /* XTA Transaction Manager object reference */
     xta_transaction_manager_t    *tm = NULL;
     /* XTA Transaction object reference */
@@ -74,8 +80,8 @@ int main(int argc, char *argv[])
      * Check command line parameters
      */
     if (argc < 4) {
-        fprintf(stderr, "This program requires PostgreSQL hostname and "
-		"two boolean parameters: 'commit' and 'insert'\n");
+        fprintf(stderr, "This program requires MySQL & PostgreSQL hostname and "
+                "two boolean parameters: 'commit' and 'insert'\n");
         return 1;
     }
     hostname = argv[1];
@@ -88,8 +94,10 @@ int main(int argc, char *argv[])
     if (insert) {
         postgresql_stmt = "INSERT INTO authors VALUES(1921, 'Rigoni Stern', "
             "'Mario')";
+        mysql_stmt = "INSERT INTO authors VALUES(1919, 'Levi', 'Primo')";
     } else {
         postgresql_stmt = "DELETE FROM authors WHERE id=1921";
+        mysql_stmt = "DELETE FROM authors WHERE id=1919";
     }
 
     /*
@@ -100,12 +108,26 @@ int main(int argc, char *argv[])
      * create a new PostgreSQL connection
      */
     snprintf(pg_conn_str, sizeof(pg_conn_str),
-		"host=%s user=lixa password=passw0rd", hostname);
+                "host=%s user=lixa password=passw0rd", hostname);
     rm1 = PQconnectdb(pg_conn_str);
     if (PQstatus(rm1) != CONNECTION_OK) {
         fprintf(stderr, "PQconnectdb: returned error %s\n",
                 PQerrorMessage(rm1));
         PQfinish(rm1);
+        return 1;
+    }
+    /*
+     * create a new MySQL connection
+     */
+    rm2 = mysql_init(NULL);
+    if (rm2 == NULL) {
+        fprintf(stderr, "mysql_init: returned NULL\n");
+        return 1;
+    }
+    if (mysql_real_connect(rm2, hostname, "lixa", "passw0rd",
+                           "lixa", 0, NULL, 0) == NULL) {
+        fprintf(stderr, "mysql_real_connect: returned error: %u, %s\n",
+                mysql_errno(rm2), mysql_error(rm2));
         return 1;
     }
     /*
@@ -127,6 +149,17 @@ int main(int argc, char *argv[])
         return 1;
     }
     /*
+     * create an XA resource for MySQL
+     * second parameter "MySQL" is descriptive
+     * third parameter "localhost,0,lixa,,lixa" identifies the specific
+     * database
+     */
+    xar2 = xta_mysql_xa_resource_new(rm2, "MySQL", "localhost,0,lixa,,lixa");
+    if (xar2 == NULL) {
+        fprintf(stderr, "xta_mysql_xa_resource_new: returned NULL\n");
+        return 1;
+    }
+    /*
      * Create a new XA global transaction
      */
     tx = xta_transaction_manager_create_transaction(tm);
@@ -142,6 +175,15 @@ int main(int argc, char *argv[])
     if (rc != LIXA_RC_OK) {
         fprintf(stderr, "xta_transaction_enlist_resource returned %d (%s) for "
                "PostgreSQL XA resource\n", rc, lixa_strerror(rc));
+        return 1;
+    }
+    /*
+     * Enlist MySQL resource to Transaction
+     */
+    rc = xta_transaction_enlist_resource(tx, (xta_xa_resource_t *)xar2);
+    if (rc != LIXA_RC_OK) {
+        fprintf(stderr, "xta_transaction_enlist_resource returned %d (%s) for "
+               "MySQL XA resource\n", rc, lixa_strerror(rc));
         return 1;
     }
     /*
@@ -167,6 +209,16 @@ int main(int argc, char *argv[])
                 postgresql_stmt, PQerrorMessage(rm1));
         PQclear(pg_res);
         PQfinish(rm1);
+        return 1;
+    }
+    /*
+     * Execute MySQL statement
+     */
+    printf("MySQL, executing >%s<\n", mysql_stmt);
+    if (mysql_query(rm2, mysql_stmt)) {
+        fprintf(stderr, "MySQL, error while executing >%s<: %u/%s\n",
+                mysql_stmt, mysql_errno(rm2), mysql_error(rm2));
+        mysql_close(rm2);
         return 1;
     }
     /*
@@ -197,6 +249,12 @@ int main(int argc, char *argv[])
      */
     xta_postgresql_xa_resource_delete(xar1);
     PQfinish(rm1);
+    /*
+     * Delete MySQL native and XA resource
+     */
+    xta_mysql_xa_resource_delete(xar2);
+    mysql_close(rm2);
     
     return 0;
 }
+
