@@ -1,7 +1,7 @@
-# xta-c: XA Transaction API for the C language
+# xta-cpp: XA Transaction API for the C++ language
 
 This image contains the libraries and the include files that are necessary to
-develop a C application with the support of XTA. Two drivers are provided:
+develop a C++ application with the support of XTA. Two drivers are provided:
 MySQL and PostgreSQL.
 
 ## How to use this image
@@ -10,63 +10,17 @@ The basic usage of this image is as a starting point to create derived images
 with an application inside. Below there are some examples that can be 
 implemented using the base image.
 
-## Examples based on xta-c Docker image
+## Examples based on xta-cpp Docker image
 
 First of all, clone *lixa-docker* repository locally:
 
 ```
 git clone https://github.com/tiian/lixa-docker.git
-cd lixa-docker/xta-c/
+cd lixa-docker/xta-cpp/
 ```
 
 it contains the source files and the Dockerfiles that are necessary to build
-some examples that use xta-c base image.
-
-### XTA Hello World!
-
-Even XTA has its own *Hello World!* program, but it does not write
-"Hello World!" on the terminal...
-The easiest possible C program with XTA is provided in source file
-hello-world.c
-
-Its Docker image can be created with:
-
-```
-docker build -f Dockerfile-hello-world -t lixa/xta-c-hello-world .
-```
-
-before starting it, you need a LIXA state server up and running; you may use
-a Docker image even for it:
-
-```
-docker run --rm -p 2345:2345 -d lixa/lixad
-```
-
-Retrieve the IP address of the host where *lixad* is running, it must be used
-to reach it from another container. Supposing the IP address is
-*192.168.123.35*, start the *XTA Hello World* container and execute the
-*Hello World* program located in */myapp* directory:
-
-```
-docker run --rm -it lixa/xta-c-hello-world bash
-
-root@5b3168d653a8:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
-
-root@5b3168d653a8:/# /myapp/hello-world 
-Creating a new XTA Transaction Manager object...
-2019-02-11 22:02:21.292122 [6/139869572630464] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
-Creating a new XTA Transaction object...
-Starting a new transaction...
-Committing the transaction...
-```
-
-That's all! You have just executed your first XTA program:
-
-* it has started a LIXA transaction manager
-* it has created and started a new transaction
-* it has committed it!
-
-Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-c/hello-world.c 
+some examples that use xta-cpp base image.
 
 ### XTA with PostgreSQL
 
@@ -78,10 +32,17 @@ use for this example:
 docker run -e POSTGRES_PASSWORD=lixa -p 5432:5432 -d lixa/lixa-postgres -c 'max_prepared_transactions=10'
 ```
 
+Before starting your program, you need a LIXA state server up and running; you
+may use a Docker image even for it:
+
+```
+docker run --rm -p 2345:2345 -d lixa/lixad
+```
+
 At this point you can build the *Hello PostgreSQL* image:
 
 ```
-docker build -f Dockerfile-hello-postgresql -t lixa/xta-c-hello-postgresql .
+docker build -f Dockerfile-hello-postgresql -t lixa/xta-cpp-hello-postgresql .
 ```
 
 Retrieve the IP address of the host where *lixad* and *postgres* are running,
@@ -90,7 +51,7 @@ is *192.168.123.35*, start the *XTA Hello PostgreSQL* container and execute the
 *Hello PostgreSQL* program located in */myapp* directory:
 
 ```
-docker run --rm -it lixa/xta-c-hello-postgresql bash
+docker run --rm -it lixa/xta-cpp-hello-postgresql bash
 
 root@5240c89b72a8:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 root@5240c89b72a8:/# /myapp/hello-postgresql 192.168.123.35 1 1
@@ -148,7 +109,7 @@ PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')
 you can verify that there's no row in the table after *INSERT* and 
 *ROLLBACK*!
 
-Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-c/hello-postgresql.c 
+Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-cpp/hello-postgresql.c 
 
 ### XTA with MySQL
 
@@ -163,7 +124,7 @@ docker run -e MYSQL_ROOT_PASSWORD=mysecretpw -p 3306:3306 -d lixa/mysql
 At this point you can build the *Hello MySQL* image:
 
 ```
-docker build -f Dockerfile-hello-mysql -t lixa/xta-c-hello-mysql .
+docker build -f Dockerfile-hello-mysql -t lixa/xta-cpp-hello-mysql .
 ```
 
 Retrieve the IP address of the host where *lixad* and *mysqld* are running,
@@ -172,7 +133,7 @@ is *192.168.123.35*, start the *XTA Hello MySQL* container and execute the
 *Hello MySQL* program located in */myapp* directory:
 
 ```
-docker run --rm -it lixa/xta-c-hello-mysql bash
+docker run --rm -it lixa/xta-cpp-hello-mysql bash
 
 root@b9b2c77b6ae9:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 root@b9b2c77b6ae9:/# /myapp/hello-mysql 192.168.123.35 1 1
@@ -240,7 +201,7 @@ MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 you can verify that there's no row in the table after *INSERT* and 
 *ROLLBACK*!
 
-Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-c/hello-mysql.c 
+Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-cpp/hello-mysql.c 
 
 ### XTA with MySQL & PostgreSQL
 
@@ -257,7 +218,7 @@ docker run -e POSTGRES_PASSWORD=lixa -p 5432:5432 -d lixa/lixa-postgres -c 'max_
 At this point you can build the *Hello MySQL PostgreSQL* image:
 
 ```
-docker build -f Dockerfile-hello-mysql-postgresql -t lixa/xta-c-hello-mysql-postgresql .
+docker build -f Dockerfile-hello-mysql-postgresql -t lixa/xta-cpp-hello-mysql-postgresql .
 ```
 
 Retrieve the IP address of the host where *lixad*, *mysqld*  and *postgres* are
@@ -266,7 +227,7 @@ address is *192.168.123.35*, start the *XTA Hello PostgreSQL* container and
 execute the *Hello MySQL PostgreSQL* program located in */myapp* directory:
 
 ```
-docker run --rm -it lixa/xta-c-hello-mysql-postgresql bash
+docker run --rm -it lixa/xta-cpp-hello-mysql-postgresql bash
 
 root@5bff2e527f3c:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 root@5bff2e527f3c:/# /myapp/hello-mysql-postgresql 192.168.123.35 1 1
@@ -363,5 +324,5 @@ MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 you can verify that there's no row in the table after *INSERT* and 
 *ROLLBACK*!
 
-Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-c/hello-mysql-postgresql.c 
+Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-cpp/hello-mysql-postgresql.c 
 

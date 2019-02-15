@@ -1,0 +1,27 @@
+# A Dockerfile to build a sample program using
+# XTA (XA Transaction API) for C++ language
+FROM lixa/xta-cpp:latest
+#
+# Build without parameters to build latest
+#	docker build -f Dockerfile-hello-mysql -t lixa/xta-cpp-hello-mysql .
+#
+# Inspect the image content with
+#	docker run --rm -it lixa/xta-cpp-hello-mysql bash
+#
+# Update Ubuntu Software repository
+ARG 	DEBIAN_FRONTEND=noninteractive
+# Copy source file to compile in /myapp
+RUN	mkdir /myapp
+COPY	hello-mysql.cpp /myapp
+# build sample program
+RUN	BUILD_DEPS='g++ libxml2-dev libglib2.0-dev libpq-dev' \
+	&& set -x \
+	&& apt-get update && apt-get install -y --no-install-recommends \
+		libpq5 default-libmysqlclient-dev $BUILD_DEPS \
+	&& cd /myapp \
+	&& export PATH=$PATH:/opt/lixa/bin \
+	&& g++ hello-mysql.cpp $(lixa-config -x -c -f -l -d --xta --language-cpp) $(mysql_config --libs_r) -o hello-mysql \
+	&& apt-get purge -y --auto-remove $BUILD_DEPS \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /var/log/*

@@ -1,17 +1,17 @@
 # A Docker image with
-# XTA (XA Transaction API) for C language
+# XTA (XA Transaction API) for C++ language
 # based on Debian Linux
 FROM debian:9-slim
 #
 # Build without parameters to build latest
-#	docker build -t lixa/xta-c .
+#	docker build -t lixa/xta-cpp .
 # Build with 2 parameters to build a specific release
 #	docker build --build-arg VERSION_CODE=1.7.4 \
-#		--build-arg VERSION_TYPE=testing -t lixa/xta-c:1.7.4 .
+#		--build-arg VERSION_TYPE=testing -t lixa/xta-cpp:1.7.4 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
 # Inspect the image content with
-#	docker run --rm -it lixa/xta-c bash
+#	docker run --rm -it lixa/xta-cpp bash
 #
 # Update Ubuntu Software repository
 ARG 	DEBIAN_FRONTEND=noninteractive
@@ -39,7 +39,7 @@ ENV	LIXA_VERSION $VERSION
 ENV	LIXA_DOWNLOAD_DEF_URL https://sourceforge.net/projects/lixa/files/latest/download
 ENV	LIXA_DOWNLOAD_VER_URL https://sourceforge.net/projects/lixa/files/lixa/$VERSION_TYPE/lixa-$VERSION_CODE.tar.gz/download
 # build LIXA
-RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-dev uuid-dev libpq-dev default-libmysqlclient-dev' \
+RUN	BUILD_DEPS='ca-certificates wget make gcc g++ pkg-config libxml2-dev libglib2.0-dev uuid-dev libpq-dev default-libmysqlclient-dev' \
 	&& set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends \
 		$BUILD_DEPS \
@@ -52,7 +52,7 @@ RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-
 	&& rm lixa.tar.gz \
 	&& cd /lixa/lixa-* \
 	&& ./configure --disable-syslog --disable-server \
-		--disable-xta-cpp --disable-xta-java --disable-xta-python \
+		--disable-xta-java --disable-xta-python \
 		--with-mysql --with-postgresql \
 	&& make && make install \
 	&& rm -rf /opt/lixa/share \
