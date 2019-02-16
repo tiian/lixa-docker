@@ -1,5 +1,5 @@
 # A Docker image for LIXA state server based on Debian Linux
-FROM debian:9-slim
+FROM	debian:stretch-slim
 #
 # Build without parameters to build latest
 #	docker build -t lixa/lixad .

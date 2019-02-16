@@ -1,7 +1,7 @@
 # A Docker image with
 # XTA (XA Transaction API) for C++ language
 # based on Debian Linux
-FROM debian:9-slim
+FROM	debian:stretch-slim
 #
 # Build without parameters to build latest
 #	docker build -t lixa/xta-cpp .
@@ -23,7 +23,7 @@ RUN	apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/log/* 
 # Install run-time pre-requisites
 RUN	apt-get update && apt-get install -y --no-install-recommends \
-	libxml2 libglib2.0 uuid-runtime \
+	libxml2 libglib2.0 uuid-runtime libpq5 libmariadbclient18 \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/log/* 
