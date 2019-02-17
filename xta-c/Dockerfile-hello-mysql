@@ -14,10 +14,10 @@ ARG 	DEBIAN_FRONTEND=noninteractive
 RUN	mkdir /myapp
 COPY	hello-mysql.c /myapp
 # build sample program
-RUN	BUILD_DEPS='gcc libxml2-dev libglib2.0-dev libpq-dev' \
+RUN	BUILD_DEPS='gcc libxml2-dev libglib2.0-dev libpq-dev default-libmysqlclient-dev' \
 	&& set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends \
-		libpq5 default-libmysqlclient-dev $BUILD_DEPS \
+		$BUILD_DEPS \
 	&& cd /myapp \
 	&& export PATH=$PATH:/opt/lixa/bin \
 	&& gcc hello-mysql.c $(lixa-config -x -c -f -l -d) $(mysql_config --libs_r) -o hello-mysql \
