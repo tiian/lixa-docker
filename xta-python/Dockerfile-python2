@@ -1,17 +1,17 @@
 # A Docker image with
-# XTA (XA Transaction API) for Python3 language
+# XTA (XA Transaction API) for Python2 language
 # based on Debian Linux
-FROM	python:3-slim
+FROM	python:2-slim
 #
 # Build without parameters to build latest
-#	docker build -f Dockerfile-python3 -t lixa/xta-python3 .
+#	docker build -f Dockerfile-python2 -t lixa/xta-python2 .
 # Build with 2 parameters to build a specific release
-#	docker build -f Dockerfile-python3 --build-arg VERSION_CODE=1.7.4 \
-#		--build-arg VERSION_TYPE=testing -t lixa/xta-python3:1.7.4 .
+#	docker build -f Dockerfile-python2 --build-arg VERSION_CODE=1.7.4 \
+#		--build-arg VERSION_TYPE=testing -t lixa/xta-python2:1.7.4 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
 # Inspect the image content with
-#	docker run --rm -it lixa/xta-python3 bash
+#	docker run --rm -it lixa/xta-python2 bash
 #
 # Update Ubuntu Software repository
 ARG 	DEBIAN_FRONTEND=noninteractive
@@ -51,7 +51,7 @@ RUN	BUILD_DEPS='ca-certificates wget make gcc g++ pkg-config swig libxml2-dev li
 	&& tar -xzf lixa.tar.gz -C /lixa \
 	&& rm lixa.tar.gz \
 	&& cd /lixa/lixa-* \
-	&& PYTHON_VERSION=3 \
+	&& PYTHON_VERSION=2 \
 	&& ./configure --disable-syslog --disable-server \
 		--disable-xta-java \
 		--with-mysql --with-postgresql \

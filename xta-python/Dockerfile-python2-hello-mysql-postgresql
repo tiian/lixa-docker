@@ -1,12 +1,12 @@
 # A Dockerfile to build a sample program using
-# XTA (XA Transaction API) for Python3 language
-FROM lixa/xta-python3:latest
+# XTA (XA Transaction API) for Python2 language
+FROM lixa/xta-python2:latest
 #
 # Build without parameters to build latest
-#	docker build -f Dockerfile-python3-hello-mysql-postgresql -t lixa/xta-python3-hello-mysql-postgresql .
+#	docker build -f Dockerfile-python2-hello-mysql-postgresql -t lixa/xta-python2-hello-mysql-postgresql .
 #
 # Inspect the image content with
-#	docker run --rm -it lixa/xta-python3-hello-mysql-postgresql bash
+#	docker run --rm -it lixa/xta-python2-hello-mysql-postgresql bash
 #
 # Update Ubuntu Software repository
 ARG 	DEBIAN_FRONTEND=noninteractive
