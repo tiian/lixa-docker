@@ -1,0 +1,18 @@
+# A Docker BUILDER image with
+# XTA (XA Transaction API) for Java language
+# based on official OpenJDK image
+FROM	lixa/xta-jdk AS builder
+#
+# Build without parameters to build latest
+#	docker build -f Dockerfile-java-hello-mysql-postgresql -t lixa/xta-java-hello-mysql-postgresql .
+#
+# Inspect the image content with
+#       docker run --rm -it lixa/xta-java-hello-mysql-postgresql bash
+#
+RUN	mkdir /myapp
+COPY	HelloMysqlPostgresql.java /myapp
+RUN	cd /myapp \
+	&& javac -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar HelloMysqlPostgresql.java
+
+FROM	lixa/xta-jre
+COPY	--from=builder /myapp/*.class /myapp/

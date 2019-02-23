@@ -1,0 +1,32 @@
+# A Docker intermediate image with
+# XTA (XA Transaction API) for Java language (JRE only)
+# based on official OpenJDK image
+FROM	openjdk:jre-slim
+#
+# Build without parameters to build latest
+#	docker build -f Dockerfile-jre -t lixa/xta-jre .
+#
+# Inspect the image content with
+#       docker run --rm -it lixa/xta-jre bash
+#
+# Update Ubuntu Software repository
+ARG     DEBIAN_FRONTEND=noninteractive
+# Install generic pre-requisites
+RUN     apt-get update && apt-get install -y --no-install-recommends \
+        apt-utils \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/* \
+        && rm -rf /var/log/*
+# Install run-time pre-requisites
+RUN     apt-get update && apt-get install -y --no-install-recommends \
+        libxml2 libglib2.0 uuid-runtime libpq5 libmariadbclient18 \
+        && apt-get clean \
+        && rm -rf /var/lib/apt/lists/* \
+        && rm -rf /var/log/* \
+        && mkdir -p /opt/lixa/bin /opt/lixa/etc /opt/lixa/lib \
+                /opt/java /myapp
+COPY    --from=lixa/xta-jdk /opt/lixa/bin/* /opt/lixa/bin/
+COPY    --from=lixa/xta-jdk /opt/lixa/etc/* /opt/lixa/etc/
+COPY    --from=lixa/xta-jdk /opt/lixa/lib/* /opt/lixa/lib/
+COPY    --from=lixa/xta-jdk /opt/lixa/lib/* /opt/lixa/lib/
+COPY    --from=lixa/xta-jdk /opt/java/* /opt/java/

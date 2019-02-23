@@ -1,26 +1,27 @@
-# xta-python: XA Transaction API for the Python language
+# xta-java: XA Transaction API for the Java language
 
 This image contains the libraries and the modules that are necessary to
-develop a Python application with the support of XTA. Two drivers are provided:
+develop a Java application with the support of XTA. Two drivers are provided:
 MySQL and PostgreSQL.
 
 ## How to use this image
 
-The basic usage of this image is as a starting point to create derived images
-with an application inside. Below there are some examples that can be 
-implemented using the base image.
+The basic usage of images xta-jdk and xta-jre is as a starting point to create
+derived images with an application inside. Below there are some examples that
+can be implemented using the base images. Multistage build is used to build
+Java programs with JDK, but execute them inside a JRE only container.
 
-## Examples based on xta-python3 Docker image
+## Example based on xta-jdk, xta-jre Docker images
 
 First of all, clone *lixa-docker* repository locally:
 
 ```
 git clone https://github.com/tiian/lixa-docker.git
-cd lixa-docker/xta-python/
+cd lixa-docker/xta-java/
 ```
 
 it contains the source files and the Dockerfiles that are necessary to build
-some examples that use xta-python2 and xta-python3 base images.
+an example that use xta-jdk and xta-jre images.
 
 ### XTA with MySQL & PostgreSQL
 
@@ -40,13 +41,10 @@ Before starting your program, you need a LIXA state server up and running; you m
 docker run --rm -p 2345:2345 -d lixa/lixad
 ```
 
-At this point you can build the *Hello MySQL PostgreSQL* image using Python3 or
-Python2, as you prefer:
+At this point you can build the *Hello MySQL PostgreSQL* image for Java: 
 
 ```
-docker build -f Dockerfile-python3-hello-mysql-postgresql -t lixa/xta-python3-hello-mysql-postgresql .
-
-docker build -f Dockerfile-python2-hello-mysql-postgresql -t lixa/xta-python2-hello-mysql-postgresql .
+docker build -f Dockerfile-java-hello-mysql-postgresql -t lixa/xta-java-hello-mysql-postgresql .
 ```
 
 Retrieve the IP address of the host where *lixad*, *mysqld*  and *postgres* are
@@ -55,19 +53,14 @@ address is *192.168.123.35*, start the *XTA Hello PostgreSQL* container and
 execute the *Hello MySQL PostgreSQL* program located in */myapp* directory:
 
 ```
-docker run --rm -it lixa/xta-python3-hello-mysql-postgresql bash
-```
+docker run --rm -it lixa/xta-java-hello-mysql-postgresql bash
 
-or, alternatively
+root@077e2a0ff249:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 
-```
-docker run --rm -it lixa/xta-python2-hello-mysql-postgresql bash
-```
+root@077e2a0ff249:/# cd /myapp
 
-```
-root@5bff2e527f3c:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
-root@5bff2e527f3c:/# python /myapp/hello-mysql-postgresql.py 192.168.123.35 1 1
-2019-02-14 22:14:25.997027 [6/140193624786880] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
+root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 1 1
+2019-02-23 22:38:02.571991 [6/140350447437568] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 ```
@@ -125,8 +118,8 @@ lixa=>
 the same program supports even *DELETE*:
 
 ```
-root@5bff2e527f3c:/# python /myapp/hello-mysql-postgresql.py 192.168.123.35 1 0
-2019-02-14 22:17:41.734837 [7/139966431422400] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
+root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 1 0
+2019-02-23 22:39:03.795428 [27/140355107317504] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
 PostgreSQL, executing >DELETE FROM authors WHERE id=1921<
 MySQL, executing >DELETE FROM authors WHERE id=1919<
 ```
@@ -151,8 +144,8 @@ lixa=>
 the same program supports even *ROLLBACK*:
 
 ```
-root@5bff2e527f3c:/# python /myapp/hello-mysql-postgresql.py 192.168.123.35 0 1
-2019-02-14 22:18:43.236523 [8/139820690380736] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
+root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 0 1
+2019-02-23 22:39:32.079391 [48/140264988256000] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 ```
@@ -160,5 +153,5 @@ MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 you can verify that there's no row in the table after *INSERT* and 
 *ROLLBACK*!
 
-Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-python/hello-mysql-postgresql.py
+Take a look to the source program in git: https://github.com/tiian/lixa-docker/blob/master/xta-java/HelloMysqlPostgresql.java
 

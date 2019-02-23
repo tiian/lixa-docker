@@ -1,0 +1,219 @@
+/*
+ * Copyright (c) 2009-2019, Christian Ferrari <tiian@users.sourceforge.net>
+ * All rights reserved.
+ *
+ * This file is part of LIXA.
+ *
+ * LIXA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * LIXA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LIXA.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+/*
+ * This program is an example implementation of the
+ * "Single Application" Pattern
+ * as documented in LIXA manual:
+ * http://www.tiian.org/lixa/manuals/html/index.html
+ *
+ * This program accepts exactly two parameters on the command line:
+ * first parameter:  "commit", boolean value (if FALSE, "rollback")
+ * second parameter: "insert", boolean value (if FALSE, "delete")
+ *
+ * Programming Style note:
+ * the purpose of this small program is not to explain Java development
+ * techniques or good style, but simply to show XTA for Java using the easiest
+ * approach.
+ */
+
+
+
+// import XTA package from LIXA project
+import org.tiian.lixa.xta.*;
+// import SQL
+import java.sql.Connection;
+import java.sql.Statement;
+// import Java XA
+import javax.sql.XAConnection;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.XAException;
+// import PostgreSQL package for XA Data Source
+import org.postgresql.xa.PGXADataSource;
+// import MySQL package for XA Data Source
+import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
+
+
+
+public class HelloMysqlPostgresql {
+    public static void main(String[] args) {
+        // Check command line parameters
+        if (args.length < 3) {
+            System.err.println(
+		"This program requires MySQL & PostgreSQL hostname " +
+		"and two boolean parameters: 'commit' and 'insert'");
+            System.exit(1);
+        }
+	// First parameter: hostname
+	String hostname = args[0];
+        // Second parameter: commit transaction
+        boolean commit = Integer.parseInt(args[1]) > 0 ? true : false;
+        // Third parameter: insert data in databases
+        boolean insert = Integer.parseInt(args[2]) > 0 ? true : false;
+        // variable for PostgreSQL statement to execute
+        String postgresqlStmt;
+        // variable for MySQL statement to execute
+        String mysqlStmt;
+
+        // XTA Transaction Manager
+        TransactionManager tm;
+        // XTA Transaction
+        Transaction tx;
+        
+        // XA Resource for PostgreSQL
+        PGXADataSource xads1 = null;
+        XAConnection xac1 = null;
+        XAResource xar1 = null;
+        Connection conn1 = null; 
+        Statement stmt1 = null;
+        
+        // XA Resource for MySQL
+        MysqlXADataSource xads2 = null;
+        XAConnection xac2 = null;
+        XAResource xar2 = null;
+        Connection conn2 = null;
+        Statement stmt2 = null;
+             
+        /*
+         * Prepare SQL statements in accordance with "insert" command line
+         * parameter
+         */
+         if (insert) {
+             postgresqlStmt = "INSERT INTO authors VALUES(1921, " +
+                 "'Rigoni Stern', 'Mario')";
+             mysqlStmt = "INSERT INTO authors VALUES(1919, 'Levi', 'Primo')";
+         } else {
+             postgresqlStmt = "DELETE FROM authors WHERE id=1921";
+             mysqlStmt = "DELETE FROM authors WHERE id=1919";
+         }
+         
+         try {
+             //
+             // A bit of scaffolding for PostgreSQL:
+             //
+             // 1. create an XA Data Source
+             xads1 = new PGXADataSource();
+             // 2. set connection parameters (one property at a time)
+             xads1.setServerName(hostname);
+             xads1.setDatabaseName("lixa");
+             xads1.setUser("lixa");
+             xads1.setPassword("passw0rd");
+             // 3. get an XA Connection from the XA Data Source
+             xac1 = xads1.getXAConnection();
+             // 4. get an XA Resource from the XA Connection
+             xar1 = xac1.getXAResource();
+             // 5. get an SQL Connection from the XA Connection
+             conn1 = xac1.getConnection();
+             //
+             // A bit of scaffolding for MySQL/MariaDB
+             //
+             // 1. create an XA Data Source             
+             xads2 = new MysqlXADataSource();
+             // 2. set connection parameters using a connection URL
+             xads2.setUrl("jdbc:mysql://" + hostname +
+			"/lixa?user=lixa&password=passw0rd");
+             // 3. get an XA Connection from the XA Data Source
+             xac2 = xads2.getXAConnection();
+             // 4. get an XA Resource from the XA Connection
+             xar2 = xac2.getXAResource();
+             // 5. get an SQL Connection from the XA Connection
+             conn2 = xac2.getConnection(); 
+             
+             //
+             // Create the XTA objects that are necessary to manage the
+             // distributed transaction
+             //
+             // Create a mew XTA Transaction Manager
+             tm = new TransactionManager();
+             // Create a new XA global transaction using the Transaction
+             // Manager as a factory
+             tx = tm.createTransaction();
+             // Enlist PostgreSQL resource to transaction
+             tx.enlistResource(xar1, "PostgreSQL",
+                               "localhost/testdb/tiian/passw0rd");
+             // Enlist MySQL resource to Transaction
+             tx.enlistResource(
+                 xar2, "MySQL",
+                 "jdbc:mysql://localhost/lixa?user=lixa/password=");
+             // Start a new XA global transaction with a single branch
+             tx.start();
+             
+             //
+             // At this point, it's time to do something with the
+             // Resource Managers (PostgreSQL and MySQL/MariaDB)
+             //
+             // Create and Execute PostgreSQL statement
+             //
+             System.out.println("PostgreSQL, executing >" +
+                                postgresqlStmt + "<");
+             // create a Statement object for PostgreSQL
+             stmt1 = conn1.createStatement();
+             // Execute PostgreSQL statements 
+             stmt1.executeUpdate(postgresqlStmt);
+             // close the statement
+             stmt1.close();
+             //
+             // Create and Execute MySQL/MariaDB statement
+             //
+             System.out.println("MySQL, executing >" + mysqlStmt + "<");
+             // create a Statement object for MySQL/MariaDB
+             stmt2 = conn2.createStatement();
+             // Execute MySQL statements 
+             stmt2.executeUpdate(mysqlStmt);
+             // close the statement
+             stmt2.close();
+             // commit or rollback
+             if (commit)
+                 tx.commit();
+             else
+                 tx.rollback();
+             
+         } catch (XtaException e) {
+             System.err.println("XtaException: LIXA ReturnCode=" +
+                                e.getReturnCode() + " ('" +
+                                e.getMessage() + "')");
+             e.printStackTrace();
+             System.exit(1);
+         } catch (XAException e) {
+             e.printStackTrace();
+                 System.exit(1);
+         } catch (Exception e) {
+             e.printStackTrace();
+             System.exit(1);
+         } finally {
+             try {
+                 // Close Statement, SQL Connection and XA Connection for
+                 // PostgreSQL
+                 stmt1.close();
+                 conn1.close();
+                 xac1.close();
+                 // Close Statement, SQL Connection and XA Connection for
+                 // MySQL
+                 stmt2.close();
+                 conn2.close();
+                 xac2.close();
+             } catch (Exception e) {
+                 e.printStackTrace();
+                 System.exit(1);
+             }
+         }
+    }
+}
