@@ -39,7 +39,6 @@ RUN	BUILD_DEPS='ca-certificates wget make gcc pkg-config libxml2-dev libglib2.0-
 	&& apt-get update && apt-get install -y --no-install-recommends \
 		$BUILD_DEPS
 RUN	mkdir -p /lixa \
-#COPY	lixa.tar.gz .
 	&& if [ "z$VERSION_CODE" != "z" -a "z$VERSION_TYPE" != "z" ]; \
 		then wget -O lixa.tar.gz "$LIXA_DOWNLOAD_VER_URL"; \
 		else wget -O lixa.tar.gz "$LIXA_DOWNLOAD_DEF_URL"; \
@@ -51,7 +50,6 @@ RUN	mkdir -p /opt/postgresql \
 RUN	cd /lixa/lixa-* \
 	&& ./configure --disable-syslog --disable-server \
 		--disable-xta-cpp --disable-xta-python \
-		--with-mysql --with-postgresql \
 		--with-mysql-jdbc=/usr/share/java/mysql.jar \
 		--with-postgresql-jdbc=/opt/postgresql/postgresql.jar \
 	&& make && make install
@@ -79,7 +77,7 @@ RUN	apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/log/* 
 # Install run-time pre-requisites
 RUN	apt-get update && apt-get install -y --no-install-recommends \
-	libxml2 libglib2.0 uuid-runtime libpq5 libmariadbclient18 \
+	libxml2 libglib2.0 uuid-runtime \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/log/* \

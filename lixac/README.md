@@ -1,3 +1,12 @@
+# LIXA and XTA
+
+LIXA, LIbre XA, is a free and open source implementation of the XA and TX
+specifications; it supports even XTA.
+XTA, XA Transaction API, is a new API that provides two phase commit feature
+to applications; it has been designed to work in a *microservices*
+environment.
+LIXA and XTA documentation is available at http://www.tiian.org/lixa/
+
 # lixac: LIXA client (command line utilities) 
 
 This image contains a LIXA client that can be used to test a LIXA server.

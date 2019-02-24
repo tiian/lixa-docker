@@ -1,3 +1,12 @@
+# LIXA and XTA
+
+LIXA, LIbre XA, is a free and open source implementation of the XA and TX
+specifications; it supports even XTA.
+XTA, XA Transaction API, is a new API that provides two phase commit feature
+to applications; it has been designed to work in a *microservices*
+environment.
+LIXA and XTA documentation is available at http://www.tiian.org/lixa/
+
 # xta-cpp: XA Transaction API for the C++ language
 
 This image contains the libraries and the include files that are necessary to
@@ -55,6 +64,7 @@ docker run --rm -it lixa/xta-cpp-hello-postgresql bash
 
 root@5240c89b72a8:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 root@5240c89b72a8:/# /myapp/hello-postgresql 192.168.123.35 1 1
+
 2019-02-11 22:17:21.169952 [7/139976635893696] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 ```
@@ -84,6 +94,7 @@ the same program supports even *DELETE*:
 
 ```
 root@5240c89b72a8:/# /myapp/hello-postgresql 192.168.123.35 1 0
+
 2019-02-11 22:19:44.907827 [8/140000182470592] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >DELETE FROM authors WHERE id=1921<
 ```
@@ -102,6 +113,7 @@ the same program supports even *ROLLBACK*:
 
 ```
 root@5240c89b72a8:/# /myapp/hello-postgresql 192.168.123.35 0 1
+
 2019-02-11 22:21:01.163932 [9/140043098961856] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 ```
@@ -137,6 +149,7 @@ docker run --rm -it lixa/xta-cpp-hello-mysql bash
 
 root@b9b2c77b6ae9:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 root@b9b2c77b6ae9:/# /myapp/hello-mysql 192.168.123.35 1 1
+
 2019-02-14 22:01:45.597170 [6/140118459779008] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 ```
@@ -178,6 +191,7 @@ the same program supports even *DELETE*:
 
 ```
 root@b9b2c77b6ae9:/# /myapp/hello-mysql 192.168.123.35 1 0
+
 2019-02-14 22:05:22.526721 [7/139694207129536] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 MySQL, executing >DELETE FROM authors WHERE id=1919<
 ```
@@ -194,6 +208,7 @@ the same program supports even *ROLLBACK*:
 
 ```
 root@b9b2c77b6ae9:/# /myapp/hello-mysql 192.168.123.35 0 1
+
 2019-02-14 22:06:09.742814 [8/140007537379264] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 ```
@@ -290,6 +305,7 @@ the same program supports even *DELETE*:
 
 ```
 root@5bff2e527f3c:/# /myapp/hello-mysql-postgresql 192.168.123.35 1 0
+
 2019-02-14 22:17:41.734837 [7/139966431422400] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >DELETE FROM authors WHERE id=1921<
 MySQL, executing >DELETE FROM authors WHERE id=1919<
@@ -316,6 +332,7 @@ the same program supports even *ROLLBACK*:
 
 ```
 root@5bff2e527f3c:/# /myapp/hello-mysql-postgresql 192.168.123.35 0 1
+
 2019-02-14 22:18:43.236523 [8/139820690380736] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<

@@ -1,3 +1,12 @@
+# LIXA and XTA
+
+LIXA, LIbre XA, is a free and open source implementation of the XA and TX
+specifications; it supports even XTA.
+XTA, XA Transaction API, is a new API that provides two phase commit feature
+to applications; it has been designed to work in a *microservices* 
+environment.
+LIXA and XTA documentation is available at http://www.tiian.org/lixa/
+
 # xta-java: XA Transaction API for the Java language
 
 This image contains the libraries and the modules that are necessary to
@@ -49,8 +58,9 @@ docker build -f Dockerfile-java-hello-mysql-postgresql -t lixa/xta-java-hello-my
 
 Retrieve the IP address of the host where *lixad*, *mysqld*  and *postgres* are
 running, it must be used to reach them from another container. Supposing the IP
-address is *192.168.123.35*, start the *XTA Hello PostgreSQL* container and
-execute the *Hello MySQL PostgreSQL* program located in */myapp* directory:
+address is *192.168.123.35*, start the *XTA Java Hello MySQL PostgreSQL*
+container and execute the *Hello MySQL PostgreSQL* program located in */myapp*
+directory:
 
 ```
 docker run --rm -it lixa/xta-java-hello-mysql-postgresql bash
@@ -60,6 +70,7 @@ root@077e2a0ff249:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/defaul
 root@077e2a0ff249:/# cd /myapp
 
 root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 1 1
+
 2019-02-23 22:38:02.571991 [6/140350447437568] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
@@ -119,6 +130,7 @@ the same program supports even *DELETE*:
 
 ```
 root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 1 0
+
 2019-02-23 22:39:03.795428 [27/140355107317504] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
 PostgreSQL, executing >DELETE FROM authors WHERE id=1921<
 MySQL, executing >DELETE FROM authors WHERE id=1919<
@@ -145,6 +157,7 @@ the same program supports even *ROLLBACK*:
 
 ```
 root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 0 1
+
 2019-02-23 22:39:32.079391 [48/140264988256000] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<

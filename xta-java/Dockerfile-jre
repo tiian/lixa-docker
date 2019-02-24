@@ -19,7 +19,7 @@ RUN     apt-get update && apt-get install -y --no-install-recommends \
         && rm -rf /var/log/*
 # Install run-time pre-requisites
 RUN     apt-get update && apt-get install -y --no-install-recommends \
-        libxml2 libglib2.0 uuid-runtime libpq5 libmariadbclient18 \
+        libxml2 libglib2.0 uuid-runtime \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/* \
         && rm -rf /var/log/* \

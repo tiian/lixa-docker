@@ -1,3 +1,12 @@
+# LIXA and XTA
+
+LIXA, LIbre XA, is a free and open source implementation of the XA and TX
+specifications; it supports even XTA.
+XTA, XA Transaction API, is a new API that provides two phase commit feature
+to applications; it has been designed to work in a *microservices*
+environment.
+LIXA and XTA documentation is available at http://www.tiian.org/lixa/
+
 # xta-python: XA Transaction API for the Python language
 
 This image contains the libraries and the modules that are necessary to
@@ -67,6 +76,7 @@ docker run --rm -it lixa/xta-python2-hello-mysql-postgresql bash
 ```
 root@5bff2e527f3c:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 root@5bff2e527f3c:/# python /myapp/hello-mysql-postgresql.py 192.168.123.35 1 1
+
 2019-02-14 22:14:25.997027 [6/140193624786880] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
@@ -126,6 +136,7 @@ the same program supports even *DELETE*:
 
 ```
 root@5bff2e527f3c:/# python /myapp/hello-mysql-postgresql.py 192.168.123.35 1 0
+
 2019-02-14 22:17:41.734837 [7/139966431422400] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >DELETE FROM authors WHERE id=1921<
 MySQL, executing >DELETE FROM authors WHERE id=1919<
@@ -152,6 +163,7 @@ the same program supports even *ROLLBACK*:
 
 ```
 root@5bff2e527f3c:/# python /myapp/hello-mysql-postgresql.py 192.168.123.35 0 1
+
 2019-02-14 22:18:43.236523 [8/139820690380736] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
