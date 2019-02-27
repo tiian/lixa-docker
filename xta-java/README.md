@@ -9,18 +9,23 @@ LIXA and XTA documentation is available at http://www.tiian.org/lixa/
 
 # xta-java: XA Transaction API for the Java language
 
-This image contains the libraries and the modules that are necessary to
+These images contain the libraries and the modules that are necessary to
 develop a Java application with the support of XTA. Two drivers are provided:
 MySQL and PostgreSQL.
+Three different images are provided:
 
-## How to use this image
+* xta-jdk: JDK as in OpenJDK official image + XTA + MySQL and PostgreSQL JDBC drivers
+* xta-jre: JRE as in OpenJDK official image + XTA + MySQL and PostgreSQL JDBC drivers
++ xta-jdk-maven: Maven and JDK as in Mave official image + XTA + MySQL and PostgreSQL JDBC drivers
+
+## How to use these images
 
 The basic usage of images xta-jdk and xta-jre is as a starting point to create
 derived images with an application inside. Below there are some examples that
 can be implemented using the base images. Multistage build is used to build
 Java programs with JDK, but execute them inside a JRE only container.
 
-## Example based on xta-jdk, xta-jre Docker images
+## An example based on xta-jdk, xta-jre Docker images
 
 First of all, clone *lixa-docker* repository locally:
 
@@ -71,7 +76,7 @@ root@077e2a0ff249:/# cd /myapp
 
 root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 1 1
 
-2019-02-23 22:38:02.571991 [6/140350447437568] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
+2019-02-23 22:38:02.571991 [6/140350447437568] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 ```
@@ -131,7 +136,7 @@ the same program supports even *DELETE*:
 ```
 root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 1 0
 
-2019-02-23 22:39:03.795428 [27/140355107317504] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
+2019-02-23 22:39:03.795428 [27/140355107317504] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5)
 PostgreSQL, executing >DELETE FROM authors WHERE id=1921<
 MySQL, executing >DELETE FROM authors WHERE id=1919<
 ```
@@ -158,7 +163,7 @@ the same program supports even *ROLLBACK*:
 ```
 root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 0 1
 
-2019-02-23 22:39:32.079391 [48/140264988256000] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5-dev)
+2019-02-23 22:39:32.079391 [48/140264988256000] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<
 MySQL, executing >INSERT INTO authors VALUES(1919, 'Levi', 'Primo')<
 ```

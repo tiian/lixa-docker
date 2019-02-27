@@ -9,7 +9,7 @@ FROM	openjdk:jre-slim
 # Inspect the image content with
 #       docker run --rm -it lixa/xta-jre bash
 #
-# Update Ubuntu Software repository
+# Update Debian Software repository
 ARG     DEBIAN_FRONTEND=noninteractive
 # Install generic pre-requisites
 RUN     apt-get update && apt-get install -y --no-install-recommends \
