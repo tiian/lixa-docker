@@ -88,6 +88,4 @@ COPY	--from=builder /opt/lixa/etc/* /opt/lixa/etc/
 COPY	--from=builder /opt/lixa/lib/* /opt/lixa/lib/
 COPY	--from=builder /opt/lixa/lib/* /opt/lixa/lib/
 COPY	--from=builder /opt/lixa/share/lixa/java/* /opt/java/
-COPY	--from=builder /opt/postgresql/postgresql.jar /opt/java/
-COPY	--from=builder /usr/share/java/mysql.jar /opt/java/
-
+COPY    --from=builder /opt/postgresql/postgresql.jar /opt/java/
