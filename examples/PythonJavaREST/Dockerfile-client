@@ -1,0 +1,18 @@
+# Build with
+# docker build -f Dockerfile-client -t rest-client .
+# Execute with
+# docker run -ti --rm -e SERVER="192.168.123.35" -e LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default" rest-client
+FROM	lixa/xta-python3
+RUN	pip install requests
+ARG 	DEBIAN_FRONTEND=noninteractive
+# Install generic pre-requisites
+RUN	apt-get update && apt-get install -y --no-install-recommends \
+	apt-utils git \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& rm -rf /var/log/* \
+	&& pip install git+git://github.com/broadinstitute/cromwell-tools.git@v0.3.1 \
+	&& apt-get remove -y --purge git
+# Add Python application
+COPY	./client.py /
+CMD	[ "python", "/client.py" ]

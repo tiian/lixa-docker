@@ -1,0 +1,28 @@
+# fetch basic image
+FROM lixa/xta-jdk-maven
+
+# Build with
+# docker build -f Dockerfile-server -t rest-server .
+# Execute with
+# docker run -ti --rm -e MAVEN_OPTS="-Djava.library.path=/opt/lixa/lib" -e LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default" -e PQSERVER="192.168.123.35" -p 18080:8080 rest-server
+
+# application placed into /opt/app
+RUN mkdir -p /opt/app
+WORKDIR /opt/app
+
+# selectively add the POM file and
+# install dependencies
+COPY	pom.xml /opt/app/
+RUN	mvn install:install-file -Dfile=/opt/java/xta.jar -DgroupId=LIXA -DartifactId=XTA -Dversion=1.7.6 -Dpackaging=jar
+RUN	mvn install:install-file -Dfile=/opt/java/postgresql.jar -DgroupId=LIXA -DartifactId=PQL -Dversion=1.7.6 -Dpackaging=jar
+RUN	mvn install
+
+# rest of the project
+COPY src /opt/app/src
+RUN mvn package
+
+# local application port
+EXPOSE 8080
+
+# execute it
+CMD ["mvn", "exec:java"]
