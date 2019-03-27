@@ -20,3 +20,5 @@ Available images:
 * xta-python: XTA for the Python language (both Python2 and Python3 are supported)
 * lixa-sql: MySQL and PostgreSQL customized images for the sake of these
             examples
+
+The directory "examples" contains further more complex examples.

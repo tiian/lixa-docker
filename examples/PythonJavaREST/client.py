@@ -69,19 +69,17 @@ tx = tm.createTransaction()
 # Enlist MySQL resource to transaction
 tx.enlistResource(xar)
 
-###while True:
-
+sys.stdout.write("***** REST client *****\n")
 # Start a new XA global transaction with multiple branches
 tx.start(True)
-
-# Retrieving xid
-xid = tx.getXid().toString()
-sys.stdout.write("***** REST client *****\n")
 
 # Execute DELETE statement
 sys.stdout.write("MySQL: executing SQL statement >" + delete_stmt + "<\n")
 cur = rm.cursor()
 cur.execute(delete_stmt)
+
+# Retrieving xid
+xid = tx.getXid().toString()
 
 # Calling server passing xid
 sys.stdout.write("Calling REST service passing: xid='" + xid + "', oper='delete'\n")
@@ -100,6 +98,7 @@ tx = tm.createTransaction()
 # The Resource must be enlisted to new Trasanction object
 tx.enlistResource(xar)
 
+sys.stdout.write("***** REST client *****\n")
 # Start a new XA global transaction with multiple branches
 tx.start(True)
 

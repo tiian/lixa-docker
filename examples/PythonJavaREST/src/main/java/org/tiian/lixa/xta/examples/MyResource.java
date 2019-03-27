@@ -87,7 +87,7 @@ public class MyResource {
 	    // 5. get an SQL Connection from the XA Connection
 	    conn = xac.getConnection();
 	    //
-	    // XTA cod
+	    // XTA code
 	    //
 	    // Create a mew XTA Transaction Manager
 	    tm = new TransactionManager();
