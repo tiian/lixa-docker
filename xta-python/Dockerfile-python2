@@ -56,7 +56,7 @@ RUN	BUILD_DEPS='ca-certificates wget make gcc g++ pkg-config swig libxml2-dev li
 		--disable-xta-java \
 		--with-mysql --with-postgresql \
 	&& make && make install \
-	&& pip install -i https://test.pypi.org/simple/ psycopg2==2.8b2 \
+	&& pip install psycopg2 \
 	&& pip install mysqlclient \
 	&& rm -rf /opt/lixa/share \
 	&& rm -r /lixa \
