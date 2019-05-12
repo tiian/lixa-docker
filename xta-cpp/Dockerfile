@@ -6,8 +6,8 @@ FROM	debian:stretch-slim
 # Build without parameters to build latest
 #	docker build -t lixa/xta-cpp .
 # Build with 2 parameters to build a specific release
-#	docker build --build-arg VERSION_CODE=1.7.4 \
-#		--build-arg VERSION_TYPE=testing -t lixa/xta-cpp:1.7.4 .
+#	docker build --build-arg VERSION_CODE=1.7.8 \
+#		--build-arg VERSION_TYPE=testing -t lixa/xta-cpp:1.7.8 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
 # Inspect the image content with

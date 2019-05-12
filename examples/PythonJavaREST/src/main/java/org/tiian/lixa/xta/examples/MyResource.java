@@ -36,7 +36,7 @@ import java.io.*;
 @Path("myresource")
 public class MyResource {
     // XTA objects
-    TransactionManager tm;
+    TransactionManager tm = null;
     Transaction tx;
     // XA Resource for PostgreSQL
     PGXADataSource xads;
@@ -129,14 +129,18 @@ public class MyResource {
 			    stmt.close();
 			    conn.close();
 			    xac.close();
-			} catch  (XtaException e) {
+			} catch (XtaException e) {
 			    System.err.println("XtaException: LIXA ReturnCode=" +
 					       e.getReturnCode() + " ('" +
 					       e.getMessage() + "')");
 			    e.printStackTrace();
 			} catch (Exception e) {
 			    e.printStackTrace();
-			}
+			} finally {
+                            // Destroy TransactionManager object and close the
+			    // connection with the LIXA state server 
+                            tm.delete();
+                        }
 		    }
 		}).start();
 	} catch (XtaException e) {
@@ -147,6 +151,7 @@ public class MyResource {
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
+
 	System.out.println("Returning 'PREPARED' to the client");
         return "PREPARED";
     }

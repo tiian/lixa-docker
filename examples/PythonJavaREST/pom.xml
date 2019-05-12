@@ -6,7 +6,7 @@
   <groupId>org.tiian</groupId>
   <artifactId>xta-docker-demo</artifactId>
   <packaging>jar</packaging>
-  <version>1.7.6</version>
+  <version>1.7.8</version>
   <name>xta-docker-demo</name>
   
   <dependencyManagement>
@@ -36,14 +36,14 @@
     <dependency>
       <groupId>LIXA</groupId>
       <artifactId>XTA</artifactId>
-      <version>1.7.6</version>
+      <version>1.7.8</version>
     </dependency>
     <!-- JDBC driver for PostgreSQL in maven repository does not work with XA
 	 protocol -->
     <dependency>
       <groupId>LIXA</groupId>
       <artifactId>PQL</artifactId>
-      <version>1.7.6</version>
+      <version>1.7.8</version>
     </dependency>
   </dependencies>
   

@@ -30,10 +30,23 @@
 import requests
 import time
 import sys
+import argparse
 import os
 import MySQLdb
 # This module is necessary for all the XTA related stuff
 from xta import *
+
+# Parse command line parameters if available
+parser = argparse.ArgumentParser()
+parser.add_argument('--no-delete', dest='delete', action='store_false', help='Do NOT execute SQL DELETE statement')
+parser.add_argument('--no-insert', dest='insert', action='store_false', help='Do NOT execute SQL INSERT statement')
+parser.set_defaults(delete=True)
+parser.set_defaults(insert=True)
+args = parser.parse_args()
+
+if not args.delete and not args.insert:
+    sys.stderr.write("Nothing to do, exiting...\n")
+    sys.exit(0)
 
 # retrieve IP address or name for MySQL database and MYAPP from env var
 try:
@@ -62,63 +75,69 @@ tm = TransactionManager()
 xar = MysqlXaResource(rm._get_native_connection(), "MySQL", 
         hostname + "/lixa")
 
-# Create a new XA global transaction and retrieve a reference from
-# the TransactionManager object
-tx = tm.createTransaction()
+# Perform the first transaction, SQL DELETE
+if args.delete:
 
-# Enlist MySQL resource to transaction
-tx.enlistResource(xar)
+    # Create a new XA global transaction and retrieve a reference from
+    # the TransactionManager object
+    tx = tm.createTransaction()
 
-sys.stdout.write("***** REST client *****\n")
-# Start a new XA global transaction with multiple branches
-tx.start(True)
+    # Enlist MySQL resource to transaction
+    tx.enlistResource(xar)
 
-# Execute DELETE statement
-sys.stdout.write("MySQL: executing SQL statement >" + delete_stmt + "<\n")
-cur = rm.cursor()
-cur.execute(delete_stmt)
+    sys.stdout.write("***** REST client *****\n")
+    # Start a new XA global transaction with multiple branches
+    tx.start(True)
 
-# Retrieving xid
-xid = tx.getXid().toString()
+    # Execute DELETE statement
+    sys.stdout.write("MySQL: executing SQL statement >" + delete_stmt + "<\n")
+    cur = rm.cursor()
+    cur.execute(delete_stmt)
 
-# Calling server passing xid
-sys.stdout.write("Calling REST service passing: xid='" + xid + "', oper='delete'\n")
-r = requests.post("http://" + hostname + ":18080/xta/myresource",
+    # Retrieving xid
+    xid = tx.getXid().toString()
+
+    # Calling server passing xid
+    sys.stdout.write("Calling REST service passing: xid='" + xid + "', oper='delete'\n")
+    r = requests.post("http://" + hostname + ":18080/xta/myresource",
         data={'xid':xid, 'oper':'delete'})
-sys.stdout.write("Server replied >" + r.text + "<\n")
+    sys.stdout.write("Server replied >" + r.text + "<\n")
 
-# Commit the transaction
-sys.stdout.write("Executing transaction commit\n")
-tx.commit()
+    # Commit the transaction
+    sys.stdout.write("Executing transaction commit\n")
+    tx.commit()
 
-# A new Transaction object must be created because multiple branches does not
-# allow the re-use of the same object
-tx = tm.createTransaction()
+# Perform the second transaction, SQL INSERT
+if args.insert:
 
-# The Resource must be enlisted to new Trasanction object
-tx.enlistResource(xar)
+    # A new Transaction object must be created because multiple branches does
+    # not allow the re-use of the same object
+    tx = tm.createTransaction()
 
-sys.stdout.write("***** REST client *****\n")
-# Start a new XA global transaction with multiple branches
-tx.start(True)
+    # The Resource must be enlisted to new Trasanction object
+    tx.enlistResource(xar)
 
-# Execute INSERT statement
-sys.stdout.write("MySQL: executing SQL statement >" + insert_stmt + "<\n")
-cur = rm.cursor()
-cur.execute(insert_stmt)
+    sys.stdout.write("***** REST client *****\n")
+    # Start a new XA global transaction with multiple branches
+    tx.start(True)
 
-# Retrieving xid
-xid = tx.getXid().toString()
+    # Execute INSERT statement
+    sys.stdout.write("MySQL: executing SQL statement >" + insert_stmt + "<\n")
+    cur = rm.cursor()
+    cur.execute(insert_stmt)
 
-# Calling server passing xid
-sys.stdout.write("Calling REST service passing: xid='" + xid + "', oper='insert'\n")
-r = requests.post("http://" + hostname + ":18080/xta/myresource",
+    # Retrieving xid
+    xid = tx.getXid().toString()
+
+    # Calling server passing xid
+    sys.stdout.write("Calling REST service passing: xid='" + xid + "', oper='insert'\n")
+    r = requests.post("http://" + hostname + ":18080/xta/myresource",
         data={'xid':xid, 'oper':'insert'})
-sys.stdout.write("Server replied >" + r.text + "<\n")
+    sys.stdout.write("Server replied >" + r.text + "<\n")
 
-# Commit the transaction
-sys.stdout.write("Executing transaction commit\n")
-tx.commit()
+    # Commit the transaction
+    sys.stdout.write("Executing transaction commit\n")
+    tx.commit()
 
 # Close the MySQL connection
 cur.close()

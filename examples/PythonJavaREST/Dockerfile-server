@@ -13,8 +13,8 @@ WORKDIR /opt/app
 # selectively add the POM file and
 # install dependencies
 COPY	pom.xml /opt/app/
-RUN	mvn install:install-file -Dfile=/opt/java/xta.jar -DgroupId=LIXA -DartifactId=XTA -Dversion=1.7.6 -Dpackaging=jar
-RUN	mvn install:install-file -Dfile=/opt/java/postgresql.jar -DgroupId=LIXA -DartifactId=PQL -Dversion=1.7.6 -Dpackaging=jar
+RUN	mvn install:install-file -Dfile=/opt/java/xta.jar -DgroupId=LIXA -DartifactId=XTA -Dversion=1.7.8 -Dpackaging=jar
+RUN	mvn install:install-file -Dfile=/opt/java/postgresql.jar -DgroupId=LIXA -DartifactId=PQL -Dversion=1.7.8 -Dpackaging=jar
 RUN	mvn install
 
 # rest of the project

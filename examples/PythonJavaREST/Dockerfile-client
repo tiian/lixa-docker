@@ -15,4 +15,4 @@ RUN	apt-get update && apt-get install -y --no-install-recommends \
 	&& apt-get remove -y --purge git
 # Add Python application
 COPY	./client.py /
-CMD	[ "python", "/client.py" ]
+ENTRYPOINT	[ "python", "/client.py" ]

@@ -6,10 +6,14 @@ FROM	openjdk:jdk-slim AS builder
 # Build without parameters to build latest
 #	docker build -f Dockerfile-jdk-maven -t lixa/xta-jdk-maven .
 # Build with 2 parameters to build a specific release
-#	docker build --build-arg VERSION_CODE=1.7.4 \
-#		--build-arg VERSION_TYPE=testing -t lixa/xta-jdk-maven:1.7.4 .
+#	docker build --build-arg VERSION_CODE=1.7.8 \
+#		--build-arg VERSION_TYPE=testing -t lixa/xta-jdk-maven:1.7.8 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
+# Build with specific configure options as for example
+#       docker build -f Dockerfile-jdk-maven \
+#               --build-arg CONFIG_OPTIONS="--enable-crash" \
+#               -t lixa/xta-jdk-maven .
 # Inspect the image content with
 #	docker run --rm -it lixa/xta-jdk-maven bash
 #
@@ -21,6 +25,9 @@ RUN	apt-get update && apt-get install -y --no-install-recommends \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/log/* 
+# Additional specific configuration options
+ARG	CONFIG_OPTIONS
+ENV	CONFIG_OPTIONS $CONFIG_OPTIONS
 # LIXA official package
 # VERSION_CODE must be in format V.R.M and it must be available on Sourceforge
 # VERSION_TYPE must be "stable" or "testing"
@@ -52,6 +59,7 @@ RUN	cd /lixa/lixa-* \
 		--disable-xta-cpp --disable-xta-python \
 		--with-mysql-jdbc=/usr/share/java/mysql.jar \
 		--with-postgresql-jdbc=/opt/postgresql/postgresql.jar \
+		$CONFIG_OPTIONS \
 	&& make && make install
 RUN	rm -rf /opt/lixa/share/doc /opt/lixa/include \
 		/opt/lixa/bin/lixatpm /opt/lixa/bin/lixavsr \
