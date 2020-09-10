@@ -1,7 +1,7 @@
 # A Docker image for LIXA state server based on Debian Linux
 FROM	debian:stretch-slim
 #
-# Build without parameters to build latest
+# Build without parameters to build latest 
 #	docker build -t lixa/lixad .
 # Build with 2 parameters to build a specific release
 #	docker build --build-arg VERSION_CODE=1.9.1 \
