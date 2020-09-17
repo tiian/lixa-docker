@@ -12,7 +12,12 @@ FROM	lixa/xta-jdk AS builder
 RUN	mkdir /myapp
 COPY	HelloMysqlPostgresql.java /myapp
 RUN	cd /myapp \
-	&& javac -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar HelloMysqlPostgresql.java
+	&& javac -cp /opt/java/xta.jar:/opt/java/mariadb-java-client.jar:/opt/java/postgresql.jar HelloMysqlPostgresql.java
 
-FROM	lixa/xta-jre
+# Should use xta-jre, but at this time (2020-09-17) is support class versions
+# up to 55.0, while xta-jdk produce class file version 58.0
+# xta-jre is a derivative of openjdk:jre-slim
+# xta-jdk is a derivative of openjdk:jdk-slim
+#FROM	lixa/xta-jre
+FROM	lixa/xta-jdk
 COPY	--from=builder /myapp/*.class /myapp/

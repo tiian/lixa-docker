@@ -46,7 +46,7 @@ couple ready to be used for this example:
 
 ```
 docker run -e MYSQL_ROOT_PASSWORD=mysecretpw -p 3306:3306 -d lixa/mysql
-docker run -e POSTGRES_PASSWORD=lixa -p 5432:5432 -d lixa/lixa-postgres -c 'max_prepared_transactions=10'
+docker run -e POSTGRES_PASSWORD=lixa -p 5432:5432 -d lixa/postgres -c 'max_prepared_transactions=10'
 ```
 
 Before starting your program, you need a LIXA state server up and running; you may use a Docker image even for it:
@@ -74,7 +74,7 @@ root@077e2a0ff249:/# export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/defaul
 
 root@077e2a0ff249:/# cd /myapp
 
-root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mysql.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 1 1
+root@077e2a0ff249:/myapp# java -Djava.library.path=/opt/lixa/lib -cp /opt/java/xta.jar:/opt/java/mariadb-java-client.jar:/opt/java/postgresql.jar:. HelloMysqlPostgresql 192.168.123.35 1 1
 
 2019-02-23 22:38:02.571991 [6/140350447437568] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.5)
 PostgreSQL, executing >INSERT INTO authors VALUES(1921, 'Rigoni Stern', 'Mario')<

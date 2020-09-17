@@ -19,7 +19,7 @@ The basic usage of this image is as a starting point to create derived images
 with an application inside. Below there are some examples that can be 
 implemented using the base image.
 
-## Examples based on xta-python3 Docker image
+## Examples based on xta-python3 and xta-python2 Docker images
 
 First of all, clone *lixa-docker* repository locally:
 

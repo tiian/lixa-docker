@@ -49,7 +49,8 @@ import javax.transaction.xa.XAException;
 // import PostgreSQL package for XA Data Source
 import org.postgresql.xa.PGXADataSource;
 // import MySQL package for XA Data Source
-import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
+// import com.mysql.jdbc.jdbc2.optional.MysqlXADataSource;
+import org.mariadb.jdbc.MariaDbDataSource;
 
 
 
@@ -86,7 +87,8 @@ public class HelloMysqlPostgresql {
         Statement stmt1 = null;
         
         // XA Resource for MySQL
-        MysqlXADataSource xads2 = null;
+        // MysqlXADataSource xads2 = null;
+        MariaDbDataSource xads2 = null;
         XAConnection xac2 = null;
         XAResource xar2 = null;
         Connection conn2 = null;
@@ -126,7 +128,8 @@ public class HelloMysqlPostgresql {
              // A bit of scaffolding for MySQL/MariaDB
              //
              // 1. create an XA Data Source             
-             xads2 = new MysqlXADataSource();
+             // xads2 = new MysqlXADataSource();
+             xads2 = new MariaDbDataSource();
              // 2. set connection parameters using a connection URL
              xads2.setUrl("jdbc:mysql://" + hostname +
 			"/lixa?user=lixa&password=passw0rd");
