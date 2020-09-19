@@ -27,10 +27,10 @@ check LIXA version and build options:
 ```
 lixa@b2eea958f107:/$ lixau -v
 LIXA: a LIbre XA implementation
-Copyright (c) 2009-2019, Christian Ferrari; all rights reserved.
+Copyright (c) 2009-2020, Christian Ferrari; all rights reserved.
 License: GPL (GNU Public License) version 2
-Package name: lixa; package version: 1.7.4
-Release date: 2019-02-09;
+Package name: lixa; package version: 1.9.1
+Release date: 2020-09-09;
 Driver for IBM DB2: no;
 Driver for MySQL: no;
 Driver for Oracle DBMS: no;
@@ -44,7 +44,7 @@ a container from image lixa/lixad before):
 ```
 lixa@7e1a75b166e2:/$ export LIXA_STATE_SERVERS="tcp://192.168.123.35:2345/default"
 lixa@7e1a75b166e2:/$ lixat
-2019-02-10 10:11:36.392130 [9/139698512349056] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.7.4)
+2020-09-19 09:19:57.977004 [10/140363169990528] INFO: LXC000I this process is starting a new LIXA transaction manager (lixa package version is 1.9.1)
 tx_open(): 0
 tx_close(): 0
 ```

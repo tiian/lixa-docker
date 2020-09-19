@@ -31,6 +31,60 @@ docker logs 66b011bb4f52
 
 ```
 
-It can be used by every compatible LIXA client.
+Once lixad is started, it can be called by every compatible LIXA client: some
+sample images like lixa/xta-c, lixa/xta-cpp, lixa/xta-python2,
+lixa/xta-python3, lixa/xta-jdk and so on, are available at https://hub.docker.com/u/lixa
 
-LIXA documentation is available at http://www.tiian.org/lixa/
+## How to manage persistency
+
+LIXA state server (lixad) persists transaction states on disk: using Docker, 
+it's suggested to use an external volume instead of an ephemeral one:
+
+```
+docker run --rm --mount source=lixad_state,target=/opt/lixa/var -p 2345:2345 -d lixa/lixad
+
+docker volume ls | grep lixad
+local               lixad_state
+```
+
+The state files can be listed with:
+```
+sudo ls -la /var/lib/docker/volumes/lixad_state/_data
+total 64
+drwxr-xr-x 2 syslog systemd-network 4096 Sep 19 21:01 .
+drwxr-xr-x 3 root   root            4096 Sep 19 21:01 ..
+-rw-r--r-- 1 syslog systemd-network  178 Sep 18 22:43 README
+-rw-r----- 1 syslog systemd-network 5280 Sep 19 21:01 lixad_status1_1
+-rw-r----- 1 syslog systemd-network 5280 Sep 19 21:01 lixad_status1_2
+-rw-r----- 1 syslog systemd-network 5280 Sep 19 21:01 lixad_status2_1
+-rw-r----- 1 syslog systemd-network 5280 Sep 19 21:01 lixad_status2_2
+-rw-r----- 1 syslog systemd-network 5280 Sep 19 21:01 lixad_status3_1
+-rw-r----- 1 syslog systemd-network 5280 Sep 19 21:01 lixad_status3_2
+-rw-r--r-- 1 syslog systemd-network    2 Sep 19 21:01 run.pid
+```
+
+## How to set environment variables
+
+LIXA uses some environment variables for configuration. If, for example, you
+want to use the *journal state engine* instead of the *traditional state engine*, you can pass **LIXA_STATE_ENGINE=JOURNAL** on the command line:
+
+```
+docker run --rm --env LIXA_STATE_ENGINE=JOURNAL --mount source=lixad_state,target=/opt/lixa/var -p 2345:2345 -d lixa/lixad
+
+sudo ls -la /var/lib/docker/volumes/lixad_state/_data
+total 40
+drwxr-xr-x 2 syslog systemd-network   4096 Sep 19 21:13 .
+drwxr-xr-x 3 root   root              4096 Sep 19 21:13 ..
+-rw-r--r-- 1 syslog systemd-network    178 Sep 18 22:43 README
+-rw-r----- 1 syslog systemd-network   1024 Sep 19 21:13 lixad_status1_0.table
+-rw-r----- 1 syslog systemd-network 204800 Sep 19 21:13 lixad_status1_1.log
+-rw-r----- 1 syslog systemd-network   1024 Sep 19 21:13 lixad_status1_1.table
+-rw-r----- 1 syslog systemd-network   1024 Sep 19 21:13 lixad_status2_0.table
+-rw-r----- 1 syslog systemd-network 204800 Sep 19 21:13 lixad_status2_1.log
+-rw-r----- 1 syslog systemd-network   1024 Sep 19 21:13 lixad_status2_1.table
+-rw-r----- 1 syslog systemd-network   1024 Sep 19 21:13 lixad_status3_0.table
+-rw-r----- 1 syslog systemd-network 204800 Sep 19 21:13 lixad_status3_1.log
+-rw-r----- 1 syslog systemd-network   1024 Sep 19 21:13 lixad_status3_1.table
+-rw-r--r-- 1 syslog systemd-network      2 Sep 19 21:13 run.pid
+```
+

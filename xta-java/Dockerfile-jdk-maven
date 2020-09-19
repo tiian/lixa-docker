@@ -1,13 +1,15 @@
 # A Docker BUILDER image with
 # XTA (XA Transaction API) for Java language
 # based on official Maven image
+# Last test date: 2020-09-19
+#
 FROM	openjdk:jdk-slim AS builder
 #
 # Build without parameters to build latest
 #	docker build -f Dockerfile-jdk-maven -t lixa/xta-jdk-maven .
 # Build with 2 parameters to build a specific release
-#	docker build --build-arg VERSION_CODE=1.9.1 \
-#		--build-arg VERSION_TYPE=testing -t lixa/xta-jdk-maven:1.9.1 .
+#	docker build --build-arg VERSION_CODE=1.9.2 \
+#		--build-arg VERSION_TYPE=testing -t lixa/xta-jdk-maven:1.9.2 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
 # Build with specific configure options as for example
@@ -49,18 +51,18 @@ RUN	mkdir -p /opt/postgresql \
 	&& wget -O /opt/postgresql/postgresql.jar "$POSTGRESQL_JDBC_URL"
 # Build from github source, uncomment this block
 # BEGIN
-RUN	git clone https://github.com/tiian/lixa.git
-RUN	cd /lixa \
+#RUN	git clone https://github.com/tiian/lixa.git
+#RUN	cd /lixa \
 # END
 # Build from sourceforge tarball, uncomment this block
 # BEGIN
-#RUN	mkdir -p /lixa \
-#	&& if [ "z$VERSION_CODE" != "z" -a "z$VERSION_TYPE" != "z" ]; \
-#		then wget -O lixa.tar.gz "$LIXA_DOWNLOAD_VER_URL"; \
-#		else wget -O lixa.tar.gz "$LIXA_DOWNLOAD_DEF_URL"; \
-#	   fi \
-#	&& tar -xzf lixa.tar.gz -C /lixa \
-#	&& rm lixa.tar.gz
+RUN	mkdir -p /lixa \
+	&& if [ "z$VERSION_CODE" != "z" -a "z$VERSION_TYPE" != "z" ]; \
+		then wget -O lixa.tar.gz "$LIXA_DOWNLOAD_VER_URL"; \
+		else wget -O lixa.tar.gz "$LIXA_DOWNLOAD_DEF_URL"; \
+	   fi \
+	&& tar -xzf lixa.tar.gz -C /lixa \
+	&& rm lixa.tar.gz
 RUN	cd /lixa/lixa-* \
 # END
         && touch configure.ac aclocal.m4 configure Makefile.am Makefile.in \
