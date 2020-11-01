@@ -1,15 +1,15 @@
 # A Docker image with
 # XTA (XA Transaction API) for C++ language
 # based on Debian Linux
-# Last test date: 2020-09-19
+# Last test date: 2020-11.-01
 #
 FROM	debian:stretch-slim
 #
 # Build without parameters to build latest
 #	docker build -t lixa/xta-cpp .
 # Build with 2 parameters to build a specific release
-#	docker build --build-arg VERSION_CODE=1.9.2 \
-#		--build-arg VERSION_TYPE=testing -t lixa/xta-cpp:1.9.2 .
+#	docker build --build-arg VERSION_CODE=1.9.3 \
+#		--build-arg VERSION_TYPE=testing -t lixa/xta-cpp:1.9.3 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
 # Inspect the image content with

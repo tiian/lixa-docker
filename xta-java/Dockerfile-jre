@@ -1,7 +1,7 @@
 # A Docker intermediate image with
 # XTA (XA Transaction API) for Java language (JRE only)
 # based on official OpenJDK image
-# Last test date: 2020-09-19
+# Last test date: 2020-11-01
 #
 FROM	openjdk:jre-slim
 #

@@ -1,13 +1,13 @@
 # A Docker image for LIXA client based on Debian Linux
-# Last test date: 2020-09-19
+# Last test date: 2020-11-01
 #
 FROM	debian:stretch-slim
 #
 # Build without parameters to build latest
 #	docker build -t lixa/lixac .
 # Build with 2 parameters to build a specific release
-#	docker build --build-arg VERSION_CODE=1.9.2 \
-#		--build-arg VERSION_TYPE=testing -t lixa/lixac:1.9.2 .
+#	docker build --build-arg VERSION_CODE=1.9.3 \
+#		--build-arg VERSION_TYPE=testing -t lixa/lixac:1.9.3 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
 # Execute with
