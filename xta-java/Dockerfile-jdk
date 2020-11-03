@@ -1,15 +1,15 @@
 # A Docker BUILDER image with
 # XTA (XA Transaction API) for Java language
 # based on official OpenJDK image
-# Last test date: 2020-11-01
+# Last test date: 2020-11-03
 #
 FROM	openjdk:jdk-slim AS builder
 #
 # Build without parameters to build latest
 #	docker build -f Dockerfile-jdk -t lixa/xta-jdk .
 # Build with 2 parameters to build a specific release
-#	docker build --build-arg VERSION_CODE=1.9.3 \
-#		--build-arg VERSION_TYPE=testing -t lixa/xta-jdk:1.9.3 .
+#	docker build --build-arg VERSION_CODE=1.9.4 \
+#		--build-arg VERSION_TYPE=testing -t lixa/xta-jdk:1.9.4 .
 #   ** Note: version code must be of the right type and must exists in
 #            Sourceforge.net
 # Inspect the image content with
