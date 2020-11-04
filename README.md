@@ -1,4 +1,4 @@
-# LIXA and XTA
+# LIXA and XTA 
 
 LIXA, LIbre XA, is a free and open source implementation of the XA and TX
 specifications; it supports even XTA.
